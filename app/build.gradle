@@ -41,6 +41,6 @@ android {
 }
 
 dependencies {
-//    api project(':lib')
-    implementation 'com.github.ssquarew:GlowPadBackPort:v2.1.5'
+    api project(':lib')
+//    implementation 'com.github.ssquarew:GlowPadBackPort:v2.1.6'
 }
