@@ -595,6 +595,20 @@ public class GlowPadView extends View {
         return drawables;
     }
 
+//    private ArrayList<TargetDrawable> loadDrawableArray(int resourceId) {
+//        Resources res = getContext().getResources();
+//        TypedArray array = res.obtainTypedArray(resourceId);
+//        final int count = array.length();
+//        ArrayList<TargetDrawable> drawables = new ArrayList<>(count);
+//        for (int i = 0; i < count; i++) {
+//            TypedValue value = array.peekValue(i);
+//            TargetDrawable target = new TargetDrawable(res, value != null ? value.resourceId : 0);
+//            drawables.add(target);
+//        }
+//        array.recycle();
+//        return drawables;
+//    }
+
     private void internalSetTargetResources(int resourceId) {
         final ArrayList<TargetDrawable> targets = loadDrawableArray(resourceId);
         mTargetDrawables = targets;

@@ -128,10 +128,25 @@ public class TargetDrawable {
         setDrawable(res, resId);
     }
 
+    public TargetDrawable(Drawable drawable, int resId) {
+        mResourceId = resId;
+        setDrawable(res);
+    }
+
     public void setDrawable(Resources res, int resId) {
         // Note we explicitly don't set mResourceId to resId since we allow the drawable to be
         // swapped at runtime and want to re-use the existing resource id for identification.
         Drawable drawable = resId == 0 ? null : res.getDrawable(resId);
+        // Mutate the drawable so we can animate shared drawable properties.
+        mDrawable = drawable != null ? drawable.mutate() : null;
+        resizeDrawables();
+        setState(STATE_INACTIVE);
+    }
+
+    public void setDrawable(Drawable drawableResource) {
+        // Note we explicitly don't set mResourceId to resId since we allow the drawable to be
+        // swapped at runtime and want to re-use the existing resource id for identification.
+        Drawable drawable = drawableResource;
         // Mutate the drawable so we can animate shared drawable properties.
         mDrawable = drawable != null ? drawable.mutate() : null;
         resizeDrawables();
