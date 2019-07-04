@@ -44,6 +44,6 @@ android {
 }
 
 dependencies {
-    api 'com.nineoldandroids:library:2.4.0'
+    implementation 'com.nineoldandroids:library:2.4.0'
     implementation 'com.github.jitpack:gradle-simple:1.0'
 }
