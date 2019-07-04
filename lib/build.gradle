@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
-
 android {
     compileSdkVersion 28
 
@@ -44,6 +43,6 @@ android {
 }
 
 dependencies {
-    implementation 'com.nineoldandroids:library:2.4.0'
+//    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.github.jitpack:gradle-simple:1.0'
 }

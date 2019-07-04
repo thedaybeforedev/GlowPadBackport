@@ -16,13 +16,12 @@
 
 package net.frakbot.glowpadbackport;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.util.Log;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.Animator.AnimatorListener;
-import com.nineoldandroids.animation.AnimatorListenerAdapter;
-import com.nineoldandroids.animation.ObjectAnimator;
-import com.nineoldandroids.animation.PropertyValuesHolder;
-import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
 import net.frakbot.glowpadbackport.util.TimeInterpolator;
 
 import java.util.ArrayList;
@@ -58,8 +57,8 @@ class Tweener {
 
     public static Tweener to(Object object, long duration, Object... vars) {
         long delay = 0;
-        AnimatorUpdateListener updateListener = null;
-        AnimatorListener listener = null;
+        ValueAnimator.AnimatorUpdateListener updateListener = null;
+        Animator.AnimatorListener listener = null;
         TimeInterpolator interpolator = null;
 
         // Iterate through arguments and discover properties to animate
@@ -77,10 +76,10 @@ class Tweener {
                 interpolator = (TimeInterpolator) value; // TODO: multiple interpolators?
             }
             else if ("onUpdate".equals(key) || "onUpdateListener".equals(key)) {
-                updateListener = (AnimatorUpdateListener) value;
+                updateListener = (ValueAnimator.AnimatorUpdateListener) value;
             }
             else if ("onComplete".equals(key) || "onCompleteListener".equals(key)) {
-                listener = (AnimatorListener) value;
+                listener = (Animator.AnimatorListener) value;
             }
             else if ("delay".equals(key)) {
                 delay = ((Number) value).longValue();
@@ -149,7 +148,7 @@ class Tweener {
     }
 
     // Listener to watch for completed animations and remove them.
-    private static AnimatorListener mCleanupListener = new AnimatorListenerAdapter() {
+    private static Animator.AnimatorListener mCleanupListener = new AnimatorListenerAdapter() {
 
         @Override
         public void onAnimationEnd(Animator animation) {
