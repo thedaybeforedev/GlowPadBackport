@@ -16,12 +16,13 @@ allprojects {
         mavenCentral()
         jcenter()
         maven { url 'https://jitpack.io' }
+        google()
     }
 
     buildscript {
         repositories {
             maven { url "https://plugins.gradle.org/m2/" }
-
+            jcenter()
             google()
         }
 
