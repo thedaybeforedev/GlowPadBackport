@@ -595,19 +595,18 @@ public class GlowPadView extends View {
         return drawables;
     }
 
-//    private ArrayList<TargetDrawable> loadDrawableArray(int resourceId) {
-//        Resources res = getContext().getResources();
-//        TypedArray array = res.obtainTypedArray(resourceId);
-//        final int count = array.length();
-//        ArrayList<TargetDrawable> drawables = new ArrayList<>(count);
-//        for (int i = 0; i < count; i++) {
-//            TypedValue value = array.peekValue(i);
-//            TargetDrawable target = new TargetDrawable(res, value != null ? value.resourceId : 0);
-//            drawables.add(target);
-//        }
-//        array.recycle();
-//        return drawables;
-//    }
+    private ArrayList<TargetDrawable> loadDrawableArray(ArrayList<Drawable> drawableArrayList) {
+
+        final int count = drawableArrayList.size();
+        ArrayList<TargetDrawable> drawables = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+
+            TargetDrawable target = new TargetDrawable(drawableArrayList.get(i));
+            drawables.add(target);
+        }
+
+        return drawables;
+    }
 
     private void internalSetTargetResources(int resourceId) {
         final ArrayList<TargetDrawable> targets = loadDrawableArray(resourceId);
@@ -632,6 +631,39 @@ public class GlowPadView extends View {
             updatePointCloudPosition(mWaveCenterX, mWaveCenterY);
         }
     }
+
+    private static final int RESOURCE_DRAWABLE = 10111;
+
+    public void setTargetResources(Drawable handleDrawable, ArrayList<Drawable> navigationTargetDrawables) {
+
+        if (handleDrawable != null){
+            mHandleDrawable = new TargetDrawable(handleDrawable);
+        }
+        final ArrayList<TargetDrawable> targets = loadDrawableArray(navigationTargetDrawables);
+        mTargetDrawables = targets;
+        mTargetResourceId = RESOURCE_DRAWABLE;
+
+        int maxWidth = mHandleDrawable.getWidth();
+        int maxHeight = mHandleDrawable.getHeight();
+        final int count = targets.size();
+        for (int i = 0; i < count; i++) {
+            TargetDrawable target = targets.get(i);
+            maxWidth = Math.max(maxWidth, target.getWidth());
+            maxHeight = Math.max(maxHeight, target.getHeight());
+        }
+        if (mMaxTargetWidth != maxWidth || mMaxTargetHeight != maxHeight) {
+            mMaxTargetWidth = maxWidth;
+            mMaxTargetHeight = maxHeight;
+            requestLayout(); // required to resize layout and call updateTargetPositions()
+        }
+        else {
+            updateTargetPositions(mWaveCenterX, mWaveCenterY);
+            updatePointCloudPosition(mWaveCenterX, mWaveCenterY);
+        }
+    }
+
+
+
 
     /**
      * Loads an array of drawables from the given resourceId.

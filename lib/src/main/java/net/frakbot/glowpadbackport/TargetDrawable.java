@@ -81,56 +81,15 @@ public class TargetDrawable {
     private boolean mEnabled = true;
     private final int mResourceId;
 
-    /* package */ static class DrawableWithAlpha extends Drawable {
-        private float mAlpha = 1.0f;
-        private Drawable mRealDrawable;
-
-        public DrawableWithAlpha(Drawable realDrawable) {
-            mRealDrawable = realDrawable;
-        }
-
-        public void setAlphaFloat(float alpha) {
-            mAlpha = alpha;
-        }
-
-        public int getAlphaFloat() {
-            return (int) (mAlpha * 255);
-        }
-
-        public void draw(Canvas canvas) {
-            mRealDrawable.setAlpha(Math.round(mAlpha * 255f));
-            mRealDrawable.draw(canvas);
-        }
-
-        @Override
-        public void setAlpha(int alpha) {
-            mRealDrawable.setAlpha(alpha);
-        }
-
-        @Override
-        public int getAlpha() {
-            return mRealDrawable.getAlpha();
-        }
-
-        @Override
-        public void setColorFilter(ColorFilter cf) {
-            mRealDrawable.setColorFilter(cf);
-        }
-
-        @Override
-        public int getOpacity() {
-            return mRealDrawable.getOpacity();
-        }
-    }
 
     public TargetDrawable(Resources res, int resId) {
         mResourceId = resId;
         setDrawable(res, resId);
     }
 
-    public TargetDrawable(Drawable drawable, int resId) {
-        mResourceId = resId;
-        setDrawable(res);
+    public TargetDrawable(Drawable drawable) {
+        mResourceId = drawable.hashCode();
+        setDrawable(drawable);
     }
 
     public void setDrawable(Resources res, int resId) {
