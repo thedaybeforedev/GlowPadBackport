@@ -1,6 +1,8 @@
 package net.frakbot.glowpadbackport.sample;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -13,6 +15,8 @@ import android.widget.Toast;
 import net.frakbot.glowpadbackport.GlowPadView;
 import net.frakbot.glowpadbackportsample.R;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class SampleActivity extends Activity {
@@ -86,10 +90,25 @@ public class SampleActivity extends Activity {
     private void bindGlowPadButtons(GlowPadView glowPadView){
 
         ArrayList<Drawable> targetDrawables = new ArrayList<>();
+
+//        for (int  i=0; i<100; i++){
+//            {
+//                Bitmap pressBmp = getBitmapFromAsset(this, "ic_lockscreen_answer_activated.png");
+//                Bitmap checkBmp = getBitmapFromAsset(this, "ic_lockscreen_decline_activated.png");
+//                Bitmap normalBmp = getBitmapFromAsset(this, "ic_lockscreen_answer_normal.png");
+//                Drawable pressDraw = new BitmapDrawable(getResources(), pressBmp);
+//                Drawable checkDraw = new BitmapDrawable(getResources(), checkBmp);
+//                Drawable normalDraw = new BitmapDrawable(getResources(), normalBmp);
+//                StateListDrawable drawable = new StateListDrawable(); drawable.addState(new int[]{android.R.attr.state_focused}, pressDraw);
+//                drawable.addState(new int[]{android.R.attr.state_active}, checkDraw);
+//                drawable.addState(new int[]{}, normalDraw);
+//
+//            }
+//        }
         {
-            Bitmap pressBmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-            Bitmap checkBmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_lockscreen_decline_activated);
-            Bitmap normalBmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_in_call_touch_handle_normal);
+            Bitmap pressBmp = getBitmapFromAsset(this, "ic_lockscreen_answer_activated.png");
+            Bitmap checkBmp = getBitmapFromAsset(this, "ic_lockscreen_decline_activated.png");
+            Bitmap normalBmp = getBitmapFromAsset(this, "ic_lockscreen_answer_normal.png");
             Drawable pressDraw = new BitmapDrawable(getResources(), pressBmp);
             Drawable checkDraw = new BitmapDrawable(getResources(), checkBmp);
             Drawable normalDraw = new BitmapDrawable(getResources(), normalBmp);
@@ -111,9 +130,9 @@ public class SampleActivity extends Activity {
             targetDrawables.add(drawable);
         }
         {
-            Bitmap pressBmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-            Bitmap checkBmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_lockscreen_decline_activated);
-            Bitmap normalBmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_in_call_touch_handle_normal);
+            Bitmap pressBmp = getBitmapFromAsset(this, "ic_lockscreen_answer_activated.png");
+            Bitmap checkBmp = getBitmapFromAsset(this, "ic_lockscreen_decline_activated.png");
+            Bitmap normalBmp = getBitmapFromAsset(this, "ic_lockscreen_answer_normal.png");
             Drawable pressDraw = new BitmapDrawable(getResources(), pressBmp);
             Drawable checkDraw = new BitmapDrawable(getResources(), checkBmp);
             Drawable normalDraw = new BitmapDrawable(getResources(), normalBmp);
@@ -123,15 +142,16 @@ public class SampleActivity extends Activity {
             targetDrawables.add(drawable);
         }
         {
-            Bitmap pressBmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-            Bitmap checkBmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_lockscreen_decline_activated);
-            Bitmap normalBmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_in_call_touch_handle_normal);
+            Bitmap pressBmp = getBitmapFromAsset(this, "ic_lockscreen_answer_activated.png");
+            Bitmap checkBmp = getBitmapFromAsset(this, "ic_lockscreen_decline_activated.png");
+            Bitmap normalBmp = getBitmapFromAsset(this, "ic_lockscreen_answer_normal.png");
             Drawable pressDraw = new BitmapDrawable(getResources(), pressBmp);
             Drawable checkDraw = new BitmapDrawable(getResources(), checkBmp);
             Drawable normalDraw = new BitmapDrawable(getResources(), normalBmp);
             StateListDrawable drawable = new StateListDrawable(); drawable.addState(new int[]{android.R.attr.state_focused}, pressDraw);
             drawable.addState(new int[]{android.R.attr.state_active}, checkDraw);
             drawable.addState(new int[]{}, normalDraw);
+
             targetDrawables.add(drawable);
         }
 
@@ -146,10 +166,29 @@ public class SampleActivity extends Activity {
             handleDrawable.addState(new int[]{}, normalDraw);
 
 
-
+        Bitmap pointBitmap = getBitmapFromAsset(this, "bullet_disk.png");
+        Drawable pointDrawable = new BitmapDrawable(getResources(), pointBitmap);
 
 
         glowPadView.setTargetResources(handleDrawable, targetDrawables);
 
+//        glowPadView.setPointCloudDrawable(pointDrawable);
+
+    }
+
+
+    public static Bitmap getBitmapFromAsset(Context context, String filePath) {
+        AssetManager assetManager = context.getAssets();
+
+        InputStream istr;
+        Bitmap bitmap = null;
+        try {
+            istr = assetManager.open(filePath);
+            bitmap = BitmapFactory.decodeStream(istr);
+        } catch (IOException e) {
+            // handle exception
+        }
+
+        return bitmap;
     }
 }

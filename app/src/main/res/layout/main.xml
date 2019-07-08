@@ -3,7 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent" android:background="#000000">
+                android:layout_height="fill_parent">
 
     <net.frakbot.glowpadbackport.GlowPadView
             android:id="@+id/incomingCallWidget"
@@ -23,7 +23,7 @@
             app:vibrationDuration="20"
             app:feedbackCount="1"
             app:glowRadius="@dimen/glowpadview_glow_radius"
-            app:pointDrawable="@drawable/ic_lockscreen_glowdot"/>
+            app:pointDrawable="@drawable/bullet_disk"/>
 
     <Button
             android:id="@+id/btn_toggle_padmult"

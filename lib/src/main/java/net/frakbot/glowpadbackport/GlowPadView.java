@@ -632,6 +632,17 @@ public class GlowPadView extends View {
         }
     }
 
+    public void setPointCloudDrawable(Drawable drawable) {
+        if (drawable == null)
+            return;
+
+        Drawable pointDrawable = drawable;
+
+        mPointCloud = new PointCloud(pointDrawable);
+        mPointCloud.makePointCloud(mInnerRadius, mOuterRadius);
+        mPointCloud.glowManager.setRadius(mGlowRadius);
+    }
+
     private static final int RESOURCE_DRAWABLE = 10111;
 
     public void setTargetResources(Drawable handleDrawable, ArrayList<Drawable> navigationTargetDrawables) {
