@@ -25,6 +25,8 @@ import android.util.Log;
 
 import java.lang.reflect.Method;
 
+import static net.frakbot.glowpadbackport.util.Const.IS_Q;
+
 public class TargetDrawable {
     private static final String TAG = "TargetDrawable";
     private static final boolean DEBUG = false;
@@ -128,6 +130,23 @@ public class TargetDrawable {
     }
 
     public boolean hasState(int[] state) {
+
+        if (IS_Q){
+            if (mDrawable instanceof StateListDrawable) {
+                StateListDrawable d = (StateListDrawable) mDrawable;
+                int[] states = d.getState();
+                for (int i = 0; i < states.length; i++) {
+                    for (int j = 0; j < state.length; j++) {
+                        if (states[i] == state[i]) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        //q 이전은 이전 처리 방식을 따름. 테스트 후 차후 개선하는 것이 좋을 지도.
         if (mDrawable instanceof StateListDrawable) {
             StateListDrawable d = (StateListDrawable) mDrawable;
             // TODO: this doesn't seem to work
