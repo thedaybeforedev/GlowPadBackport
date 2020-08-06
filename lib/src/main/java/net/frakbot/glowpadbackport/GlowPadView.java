@@ -311,6 +311,10 @@ public class GlowPadView extends View {
         mGlowAnimations.start();
     }
 
+    public TargetDrawable getHandleDrawable(){
+        return mHandleDrawable;
+    }
+
     @Override
     protected int getSuggestedMinimumWidth() {
         // View should be large enough to contain the background + handle and

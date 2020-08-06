@@ -23,6 +23,8 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.util.Log;
 
+import androidx.core.graphics.drawable.DrawableCompat;
+
 import java.lang.reflect.Method;
 
 import static net.frakbot.glowpadbackport.util.Const.IS_Q;
@@ -158,6 +160,10 @@ public class TargetDrawable {
             }
         }
         return false;
+    }
+
+    public void setTintColor(int tintColor){
+        DrawableCompat.setTint(mDrawable, tintColor);
     }
 
     /**

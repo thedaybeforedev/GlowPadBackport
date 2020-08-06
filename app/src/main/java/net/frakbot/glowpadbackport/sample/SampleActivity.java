@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
@@ -31,6 +32,8 @@ public class SampleActivity extends Activity {
 
 
         bindGlowPadButtons(glowPad);
+
+
 
         toggleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,6 +174,8 @@ public class SampleActivity extends Activity {
 
 
         glowPadView.setTargetResources(handleDrawable, targetDrawables);
+
+        glowPadView.getHandleDrawable().setTintColor(Color.RED);
 
 //        glowPadView.setPointCloudDrawable(pointDrawable);
 
