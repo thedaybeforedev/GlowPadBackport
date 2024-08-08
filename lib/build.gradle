@@ -43,6 +43,35 @@ android {
     }
 }
 
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = project.GROUP_ID
+                artifactId = project.ARTIFACT_ID
+                version = project.VERSION_NAME
+            }
+            publicBeta(MavenPublication) {
+                from components.publicBeta
+                groupId = project.GROUP_ID
+                artifactId = project.ARTIFACT_ID + "-public-beta"
+                version = project.VERSION_NAME + "-beta"
+            }
+            publicDebug(MavenPublication) {
+                from components.publicDebug
+                groupId = project.GROUP_ID
+                artifactId = project.ARTIFACT_ID + "-public-debug"
+                version = project.VERSION_NAME + "-debug"
+            }
+        }
+        repositories {
+            mavenLocal()
+        }
+    }
+}
+
 dependencies {
 //    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:2.0.0"
