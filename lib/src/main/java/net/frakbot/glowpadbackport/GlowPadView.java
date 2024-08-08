@@ -41,6 +41,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityManager;
 
+import net.frakbot.glowpadbackport.lib.R;
 import net.frakbot.glowpadbackport.util.Const;
 import net.frakbot.glowpadbackport.util.TimeInterpolator;
 
