@@ -11,7 +11,7 @@ android {
 
         versionName VERSION_NAME
         versionCode Integer.parseInt(VERSION_CODE)
-        namespace 'net.frakbot.glowpadbackport.lib' // 여기에 namespace 추가
+        namespace 'com.github.thedaybeforedev.GlowPadBackPort.lib' // 여기에 namespace 추가
     }
 
     compileOptions {
@@ -51,18 +51,6 @@ afterEvaluate {
                 groupId = 'com.github.thedaybeforedev.GlowPadBackPort'
                 artifactId = 'glowpadbackport'
                 version = project.VERSION_NAME
-            }
-            publicBeta(MavenPublication) {
-                from components.publicBeta
-                groupId = 'com.github.thedaybeforedev.GlowPadBackPort'
-                artifactId = 'glowpadbackport'
-                version = project.VERSION_NAME + "-beta"
-            }
-            publicDebug(MavenPublication) {
-                from components.publicDebug
-                groupId = 'com.github.thedaybeforedev.GlowPadBackPort'
-                artifactId = 'glowpadbackport'
-                version = project.VERSION_NAME + "-debug"
             }
         }
         repositories {
