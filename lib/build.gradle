@@ -43,26 +43,25 @@ android {
     }
 }
 
-
 afterEvaluate {
     publishing {
         publications {
             release(MavenPublication) {
                 from components.release
-                groupId = project.GROUP_ID
-                artifactId = project.ARTIFACT_ID
+                groupId = 'com.github.thedaybeforedev.GlowPadBackPort'
+                artifactId = 'glowpadbackport'
                 version = project.VERSION_NAME
             }
             publicBeta(MavenPublication) {
                 from components.publicBeta
-                groupId = project.GROUP_ID
-                artifactId = project.ARTIFACT_ID + "-public-beta"
+                groupId = 'com.github.thedaybeforedev.GlowPadBackPort'
+                artifactId = 'glowpadbackport'
                 version = project.VERSION_NAME + "-beta"
             }
             publicDebug(MavenPublication) {
                 from components.publicDebug
-                groupId = project.GROUP_ID
-                artifactId = project.ARTIFACT_ID + "-public-debug"
+                groupId = 'com.github.thedaybeforedev.GlowPadBackPort'
+                artifactId = 'glowpadbackport'
                 version = project.VERSION_NAME + "-debug"
             }
         }
