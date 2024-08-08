@@ -14,7 +14,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 import net.frakbot.glowpadbackport.GlowPadView;
-import net.frakbot.glowpadbackportsample.R;
+import net.frakbot.glowpadbackport.R;
+
 
 import java.io.IOException;
 import java.io.InputStream;

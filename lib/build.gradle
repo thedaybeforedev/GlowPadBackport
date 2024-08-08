@@ -1,22 +1,23 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'maven-publish'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 android {
-    compileSdkVersion 29
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 26
+        compileSdk 34
+        minSdkVersion 26
+        targetSdkVersion 34
 
         versionName VERSION_NAME
         versionCode Integer.parseInt(VERSION_CODE)
+        namespace 'net.frakbot.glowpadbackport' // 여기에 namespace 추가
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
-
-
 
     buildTypes {
         release {
@@ -44,7 +45,13 @@ android {
 
 dependencies {
 //    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.github.jitpack:gradle-simple:1.0'
-    implementation "androidx.appcompat:appcompat:1.2.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:2.0.0"
+    implementation('com.github.jitpack:gradle-simple:2.0') {
+//        exclude group: 'com.google.guava', module: 'guava'
+//        exclude group: 'com.google.guava', module: 'listenablefuture'
+    }
+    implementation('androidx.appcompat:appcompat:1.7.0') {
+
+    }
 
 }

@@ -26,6 +26,7 @@ import android.util.Log;
 import androidx.core.graphics.drawable.DrawableCompat;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import static net.frakbot.glowpadbackport.util.Const.IS_Q;
 
@@ -34,43 +35,25 @@ public class TargetDrawable {
     private static final boolean DEBUG = false;
 
     public static final int[] STATE_ACTIVE =
-        {android.R.attr.state_enabled, android.R.attr.state_active};
+            {android.R.attr.state_enabled, android.R.attr.state_active};
     public static final int[] STATE_INACTIVE =
-        {android.R.attr.state_enabled, -android.R.attr.state_active};
+            {android.R.attr.state_enabled, -android.R.attr.state_active};
     public static final int[] STATE_FOCUSED =
-        {android.R.attr.state_enabled, -android.R.attr.state_active,
-         android.R.attr.state_focused};
+            {android.R.attr.state_enabled, -android.R.attr.state_active,
+                    android.R.attr.state_focused};
 
-    // We're using Reflection to access these private APIs on older Android versions
-    static Method mGetStateDrawableIndex, mGetStateCount, mGetStateDrawable;
+    // Reflection을 위한 메소드들
+    private static Method getStateDrawableMethod;
+    private static Method getStateCountMethod;
 
     static {
-        // In this static block we initialize all reflected methods (so that we can work around
-        // the @hide annotations for those Android Framework methods). This is not ideal, but
-        // there's not much we can do about that either.
         try {
-            mGetStateCount = StateListDrawable.class.getDeclaredMethod("getStateCount");
-            mGetStateCount.setAccessible(true);
-        }
-        catch (NoSuchMethodException e) {
-            Log.e(TAG, "Couldn't access the StateListDrawable#getStateCount() method. " +
-                       "Some stuff might break!", e);
-        }
-        try {
-            mGetStateDrawable = StateListDrawable.class.getDeclaredMethod("getStateDrawable", int.class);
-            mGetStateDrawable.setAccessible(true);
-        }
-        catch (NoSuchMethodException e) {
-            Log.e(TAG, "Couldn't access the StateListDrawable#getStateDrawable(int) method. " +
-                       "Some stuff might break!", e);
-        }
-        try {
-            mGetStateDrawableIndex = StateListDrawable.class.getDeclaredMethod("getStateDrawableIndex", int[].class);
-            mGetStateDrawableIndex.setAccessible(true);
-        }
-        catch (NoSuchMethodException e) {
-            Log.e(TAG, "Couldn't access the StateListDrawable#mGetStateDrawableIndex(int[]) method. " +
-                       "Some stuff might break!", e);
+            getStateDrawableMethod = StateListDrawable.class.getDeclaredMethod("getStateDrawable", int.class);
+            getStateDrawableMethod.setAccessible(true);
+            getStateCountMethod = StateListDrawable.class.getDeclaredMethod("getStateCount");
+            getStateCountMethod.setAccessible(true);
+        } catch (NoSuchMethodException e) {
+            Log.e(TAG, "Reflection setup failed", e);
         }
     }
 
@@ -85,7 +68,6 @@ public class TargetDrawable {
     private boolean mEnabled = true;
     private final int mResourceId;
 
-
     public TargetDrawable(Resources res, int resId) {
         mResourceId = resId;
         setDrawable(res, resId);
@@ -97,20 +79,14 @@ public class TargetDrawable {
     }
 
     public void setDrawable(Resources res, int resId) {
-        // Note we explicitly don't set mResourceId to resId since we allow the drawable to be
-        // swapped at runtime and want to re-use the existing resource id for identification.
         Drawable drawable = resId == 0 ? null : res.getDrawable(resId);
-        // Mutate the drawable so we can animate shared drawable properties.
         mDrawable = drawable != null ? drawable.mutate() : null;
         resizeDrawables();
         setState(STATE_INACTIVE);
     }
 
     public void setDrawable(Drawable drawableResource) {
-        // Note we explicitly don't set mResourceId to resId since we allow the drawable to be
-        // swapped at runtime and want to re-use the existing resource id for identification.
         Drawable drawable = drawableResource;
-        // Mutate the drawable so we can animate shared drawable properties.
         mDrawable = drawable != null ? drawable.mutate() : null;
         resizeDrawables();
         setState(STATE_INACTIVE);
@@ -118,7 +94,6 @@ public class TargetDrawable {
 
     public TargetDrawable(TargetDrawable other) {
         mResourceId = other.mResourceId;
-        // Mutate the drawable so we can animate shared drawable properties.
         mDrawable = other.mDrawable != null ? other.mDrawable.mutate() : null;
         resizeDrawables();
         setState(STATE_INACTIVE);
@@ -132,51 +107,11 @@ public class TargetDrawable {
     }
 
     public boolean hasState(int[] state) {
-
-        if (IS_Q){
-            if (mDrawable instanceof StateListDrawable) {
-                StateListDrawable d = (StateListDrawable) mDrawable;
-                int[] states = d.getState();
-                for (int i = 0; i < states.length; i++) {
-                    for (int j = 0; j < state.length; j++) {
-                        if (states[i] == state[i]) {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-
-        //q 이전은 이전 처리 방식을 따름. 테스트 후 차후 개선하는 것이 좋을 지도.
         if (mDrawable instanceof StateListDrawable) {
             StateListDrawable d = (StateListDrawable) mDrawable;
-            // TODO: this doesn't seem to work
-            try {
-                return (Integer) mGetStateDrawableIndex.invoke(d, state) != -1;
-            }
-            catch (Exception e) {
-                Log.w(TAG, "StateListDrawable#getStateDrawableIndex(int[]) call failed!", e);
-            }
-        }
-        return false;
-    }
-
-    public void setTintColor(int tintColor){
-        DrawableCompat.setTint(mDrawable, tintColor);
-    }
-
-    /**
-     * Returns true if the drawable is a StateListDrawable and is in the focused state.
-     *
-     * @return Returns true if the drawable is a StateListDrawable and is in the focused state
-     */
-    public boolean isActive() {
-        if (mDrawable instanceof StateListDrawable) {
-            StateListDrawable d = (StateListDrawable) mDrawable;
-            int[] states = d.getState();
-            for (int i = 0; i < states.length; i++) {
-                if (states[i] == android.R.attr.state_focused) {
+            int[][] states = getStateArray(d);
+            for (int[] existingState : states) {
+                if (Arrays.equals(existingState, state)) {
                     return true;
                 }
             }
@@ -184,72 +119,68 @@ public class TargetDrawable {
         return false;
     }
 
-    /**
-     * Returns true if this target is enabled. Typically an enabled target contains a valid
-     * drawable in a valid state. Currently all targets with valid drawables are valid.
-     *
-     * @return Returns true if the target is enabled, false otherwise
-     */
+    private int[][] getStateArray(StateListDrawable d) {
+        int stateCount = getStateCount(d);
+        int[][] states = new int[stateCount][];
+        for (int i = 0; i < stateCount; i++) {
+            states[i] = getStateDrawable(d, i).getState();
+        }
+        return states;
+    }
+
+    private int getStateCount(StateListDrawable d) {
+        try {
+            return (int) getStateCountMethod.invoke(d);
+        } catch (Exception e) {
+            Log.e(TAG, "Couldn't access StateListDrawable#getStateCount method", e);
+            return 0;
+        }
+    }
+
+    private Drawable getStateDrawable(StateListDrawable d, int index) {
+        try {
+            return (Drawable) getStateDrawableMethod.invoke(d, index);
+        } catch (Exception e) {
+            Log.e(TAG, "Couldn't access StateListDrawable#getStateDrawable method", e);
+            return null;
+        }
+    }
+
+    public void setTintColor(int tintColor) {
+        DrawableCompat.setTint(mDrawable, tintColor);
+    }
+
+    public boolean isActive() {
+        return hasState(STATE_FOCUSED);
+    }
+
     public boolean isEnabled() {
         return mDrawable != null && mEnabled;
     }
 
-    /**
-     * Makes drawables in a StateListDrawable all the same dimensions.
-     * If not a StateListDrawable, then justs sets the bounds to the intrinsic size of the
-     * drawable.
-     */
     private void resizeDrawables() {
         if (mDrawable instanceof StateListDrawable) {
             StateListDrawable d = (StateListDrawable) mDrawable;
             int maxWidth = 0;
             int maxHeight = 0;
-            Integer stateCount = 0;
-            try {
-                stateCount = (Integer) mGetStateCount.invoke(d);
-            }
-            catch (Exception e) {
-                Log.w(TAG, "StateListDrawable#getStateCount() call failed!", e);
-            }
-
+            int stateCount = getStateCount(d);
             for (int i = 0; i < stateCount; i++) {
-                Drawable childDrawable;
-                try {
-                    childDrawable = (Drawable) mGetStateDrawable.invoke(d, i);
+                Drawable childDrawable = getStateDrawable(d, i);
+                if (childDrawable != null) {
+                    maxWidth = Math.max(maxWidth, childDrawable.getIntrinsicWidth());
+                    maxHeight = Math.max(maxHeight, childDrawable.getIntrinsicHeight());
                 }
-                catch (Exception e) {
-                    Log.w(TAG, "StateListDrawable#getStateDrawable(int) call failed!", e);
-                    continue;
-                }
-
-                maxWidth = Math.max(maxWidth, childDrawable.getIntrinsicWidth());
-                maxHeight = Math.max(maxHeight, childDrawable.getIntrinsicHeight());
-            }
-            if (DEBUG) {
-                Log.v(TAG, "union of childDrawable rects " + d + " to: "
-                           + maxWidth + "x" + maxHeight);
             }
             d.setBounds(0, 0, maxWidth, maxHeight);
             for (int i = 0; i < stateCount; i++) {
-                Drawable childDrawable;
-                try {
-                    childDrawable = (Drawable) mGetStateDrawable.invoke(d, i);
+                Drawable childDrawable = getStateDrawable(d, i);
+                if (childDrawable != null) {
+                    childDrawable.setBounds(0, 0, maxWidth, maxHeight);
                 }
-                catch (Exception e) {
-                    Log.w(TAG, "StateListDrawable#getStateDrawable(int) call failed!", e);
-                    continue;
-                }
-
-                if (DEBUG) {
-                    Log.v(TAG, "sizing drawable " + childDrawable + " to: "
-                               + maxWidth + "x" + maxHeight);
-                }
-                childDrawable.setBounds(0, 0, maxWidth, maxHeight);
             }
-        }
-        else if (mDrawable != null) {
+        } else if (mDrawable != null) {
             mDrawable.setBounds(0, 0,
-                                mDrawable.getIntrinsicWidth(), mDrawable.getIntrinsicHeight());
+                    mDrawable.getIntrinsicWidth(), mDrawable.getIntrinsicHeight());
         }
     }
 

@@ -1,13 +1,20 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+    ext {
+        agp_version = '8.3.0' //Android Gradle Plugin 버전
+        kotlin_version = '2.0.0' //원하는 Kotlin 버전
+    }
+
     repositories {
         google()
         jcenter()
     }
+
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath "com.android.tools.build:gradle:$agp_version"
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5' // Add this line
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -17,14 +24,10 @@ allprojects {
         jcenter()
         maven { url 'https://jitpack.io' }
     }
-
-    buildscript {
-        repositories {
-            jcenter()
-            google()
-        }
-
-    }
 }
-group='com.github.ssquarew'
 
+group = 'com.github.ssquarew'
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
